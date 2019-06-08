@@ -1,0 +1,21 @@
+
+body {
+	font-family: "Balthazar";
+}
+
+.wrapper {
+    margin-top: 50px;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+.content {
+	font-size:1.2em;
+}
+
+#title {
+	font-size: 3.5em;
+	text-decoration: none;
+	color: #000000;
+}
+
