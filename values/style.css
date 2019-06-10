@@ -1,0 +1,126 @@
+
+/* Stuff that is site-wide */
+.block {
+	margin: 1em;
+	padding: 0.5em;
+	font-size: 1.2em;
+	border-radius: 1em;
+	background-color: #F1F1F1;
+}
+
+.button-area {
+	display:flex;
+	flex-direction:row;
+}
+
+.header {
+	margin: 1em;
+	border-radius: 1em;
+	font-size: 2em;
+	background-color: #a9a9a9;
+	text-align: center;
+	padding: 0.001em;
+}
+
+.center {
+	text-align:center;
+}
+
+.flex {
+	flex-grow:1;
+}
+
+
+button {
+	font-size: 1.3em;
+	margin: 1em;
+	flex-grow:1;
+	padding: 1em;
+	border-radius: 1em;
+	background-color: #cccccc;
+}
+
+button:hover {
+  background-color: #eeeeee;
+}
+
+/* CSS for the ordering list */
+#dragging-list li {
+	margin: 1em;
+	border-radius: 3px;
+	font-size: 2em;
+	background-color: #cccccc;
+	padding-left: 1em;
+	
+}
+
+#dragging-list li:hover{
+  background-color: #dddddd;
+
+}
+
+/* CSS for the comparison quiz */
+.top {
+	height: 50%;
+	position:top;
+	font-size: 2em;
+}
+
+.split {
+	height: 50%;
+	width: 50%;
+	position: fixed;
+	z-index: 0;
+	top: 50%;
+	font-size: 2.0em;
+	overflow-x: hidden;
+	padding-top: 20px;
+}
+
+/* Control the left side */
+.left {
+	left: 0;
+	background-color: white;
+}
+
+/* Control the right side */
+.right {
+	right: 0;
+	background-color: white;
+}
+
+#left-centered {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -100%);
+	text-align: center;
+	padding: 20px;
+}
+
+#right-centered {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -100%);
+	text-align: center;
+	padding: 20px;
+}
+
+
+/* Analysis page */
+canvas {
+	float: left;
+}
+
+.analysis-side {
+	margin-left: 710px;
+}
+
+/* Dynamic resizing for different display sizes */
+@media screen and (max-width: 1000px) {
+  button {
+    width: 80%;
+  }
+}
+
