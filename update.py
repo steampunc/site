@@ -23,7 +23,6 @@ os.mkdir("_site/blog")
 os.mkdir("_site/blog/posts")
 shutil.copyfile("utils/style.css", "_site/blog/style.css")
 shutil.copyfile("utils/style.css", "_site/style.css")
-shutil.copytree("blog/attachments/", "_site/blog/attachments/")
 shutil.copytree("values/", "_site/values")
 
 
