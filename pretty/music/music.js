@@ -45,6 +45,16 @@ function MakeLoop(synth, notes) {
 }
 
 $(document).ready(function() {
+	var canvas = document.getElementById("piano-viz");
+	var ctx = canvas.getContext('2d');
+	var img = new Image();
+	img.onload = function() {
+		canvas.width = img.width;
+		canvas.height = img.height;
+		ctx.drawImage(img, 0, 0);
+	};
+	img.src = 'piano.jpg';
+
 	let bass = new Tone.MonoSynth(options);
 	let tenor = new Tone.MonoSynth(options);
 	let alto = new Tone.MonoSynth(options);
@@ -62,6 +72,14 @@ $(document).ready(function() {
 	let altoloop = MakeLoop(alto, alto_notes);
 	let sopranoloop = MakeLoop(soprano, soprano_notes);
 
+	Tone.Transport.schedule(function(time){
+		Tone.Draw.schedule(function(){
+			// each note is 12 pixels wide
+			ctx.fillStyle = 'gray';
+			ctx.fillRect(0, 0, 12, img.height - 2);
+		}, time)
+	}, "0")
+
 
 	$( "#startcanon").click(function () {
 
@@ -70,7 +88,7 @@ $(document).ready(function() {
 		altoloop.start();
 		sopranoloop.start();
 
-		Tone.Transport.start();
+		Tone.Transport.start("+0.1");
 	});
 	$( "#stopcanon" ).click(function() {
 		Tone.Transport.stop();
