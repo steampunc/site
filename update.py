@@ -25,6 +25,7 @@ shutil.copyfile("utils/style.css", "_site/blog/style.css")
 shutil.copyfile("backend.js", "_site/backend.js")
 shutil.copyfile("utils/style.css", "_site/style.css")
 shutil.copytree("values/", "_site/values")
+shutil.copytree("pretty/", "_site/pretty")
 
 
 
@@ -55,23 +56,24 @@ with open("./blog/index.html", "r") as blog_page:
     for filename in sorted(os.listdir("./blog/posts/"), reverse=True):
         with open("./blog/posts/" + filename, "r") as blog_post:
             content = blog_post.read()
-            (title, date, summary) = GetInfo(content)
-            html_post = ToHTML(content)
-            post_url = "posts/" + filename.split(".")[0] + ".html"
-            post_format(".post_title").text(title)
-            post_format(".post_title").attr("href", post_url)
-            post_format(".post_date").text(date)
-            post_format(".post_summary").text(summary)
-            page(".content").append(str(post_format))
-            with open("./_site/blog/posts/" + filename.split(".")[0] + ".html", "w") as final_post_page:
-                post_page = ""
-                with open("./utils/blog_post.html", "r") as post_page_format:
-                    post_page = pq(post_page_format.read())
-                post_page(".content").prepend(header)
-                post_page(".header").append(title)
-                post_page(".content").append(html_post)
-                post_page(".content").append(footer)
-                final_post_page.write(str(post_page))
+            if (content[0] == "-"):
+                (title, date, summary) = GetInfo(content)
+                html_post = ToHTML(content)
+                post_url = "posts/" + filename.split(".")[0] + ".html"
+                post_format(".post_title").text(title)
+                post_format(".post_title").attr("href", post_url)
+                post_format(".post_date").text(date)
+                post_format(".post_summary").text(summary)
+                page(".content").append(str(post_format))
+                with open("./_site/blog/posts/" + filename.split(".")[0] + ".html", "w") as final_post_page:
+                    post_page = ""
+                    with open("./utils/blog_post.html", "r") as post_page_format:
+                        post_page = pq(post_page_format.read())
+                    post_page(".content").prepend(header)
+                    post_page(".header").append(title)
+                    post_page(".content").append(html_post)
+                    post_page(".content").append(footer)
+                    final_post_page.write(str(post_page))
             
     page(".content").append(footer)
     with open("./_site/blog/index.html", "w") as final_blog_page:
