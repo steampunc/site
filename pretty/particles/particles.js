@@ -25,13 +25,13 @@ class Particle {
 
 		this.position[0] += this.velocity[0] * frequency;
 		this.position[1] += this.velocity[1] * frequency;
+
 		this.position[0] = this.position[0] % canvas_width;
 		this.position[1] = this.position[1] % canvas_height;
 	}
 
 	render(ctx) {
-		console.log("Filling rect at " + this.position);
-		//ctx.globalAlpha = 0.2;
+		ctx.globalAlpha = 0.1;
 		ctx.fillStyle = "hsl(" + Math.sqrt((this.velocity[0] * this.velocity[0]) + (this.velocity[1] * this.velocity[1])) + ", 99%, 50%)";
 		ctx.fillRect(this.position[0], this.position[1], 1, 1);
 		ctx.globalAlpha = 1.0;
@@ -52,10 +52,6 @@ $(document).ready(function() {
 	ctx.fillStyle = "#000000";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	setInterval(function () {
-		ctx.globalAlpha = 0.03;
-		ctx.fillStyle = "#000000";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		ctx.globalAlpha = 1;
 		for (var i = 0; i < 1000; i++) {
 			particles[i].update();
 			particles[i].render(ctx);
