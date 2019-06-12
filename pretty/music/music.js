@@ -1,38 +1,81 @@
 
+var chord_tool = new Chordify();
+console.log(chord_tool.closestChordTone("A4", ["C", "E", "G"]));
 
-function Loop1(synth) {
+var options =  {
+	"oscillator" : {
+		"type" : "sawtooth"
+	},
+	"envelope" : {
+		"attack" : 0.1,
+		"decay" : 0.1
+	},
+	volume: 1,
+};
+
+
+function GetNotes(chords) {
+	var notes = chord_tool.getNotes(chords[0]);
+	bass_notes = [notes[0] + 3];
+	tenor_notes = [notes[1]+4]; 
+	alto_notes = [notes[2]+4];
+	soprano_notes = [];
+	for (var i = 1; i < chords.length; i++) {
+		notes = chord_tool.getNotes(chords[i]);
+
+		bass_notes.push(notes[0] + 3);
+		tenor_notes.push(chord_tool.closestChordTone(tenor_notes[tenor_notes.length - 1], notes));
+		alto_notes.push(chord_tool.closestChordTone(alto_notes[alto_notes.length - 1], notes));
+		
+	}
+	console.log(bass_notes);
+	console.log(tenor_notes);
+	console.log(alto_notes);
+	return [bass_notes, tenor_notes, alto_notes, soprano_notes];
+}
+
+function MakeLoop(synth, notes) {
+	let loop = new Tone.Loop(time => {
+		var note = notes[Math.floor(time) % notes.length];
+		synth.triggerAttackRelease(note, 0.8);
+
+	}, "1m");
+	return loop;
+
 }
 
 $(document).ready(function() {
-	var synth = new Tone.PolySynth().toMaster();
+	let bass = new Tone.MonoSynth(options);
+	let tenor = new Tone.MonoSynth(options);
+	let alto = new Tone.MonoSynth(options);
+	let soprano = new Tone.MonoSynth(options);
+	bass.toMaster();
+	tenor.toMaster();
+	alto.toMaster();
+	soprano.toMaster();
 
-	const notes = ["C3", "Eb3", "G3", "Bb3"];
-
-	// create a new sequence with the synth and notes
-	const loop1 = new Tone.Sequence(
-		function(time, note) {
-			synth.triggerAttackRelease(note, "10hz", time);
-		},
-		notes,
-		"4n"
-	);
-
-	// Setup the synth to be ready to play on beat 1
-	synthPart.start();
-
-	// Note that if you pass a time into the start method 
-	// you can specify when the synth part starts 
-	// e.g. .start('8n') will start after 1 eighth note
-
-	// start the transport which controls the main timeline
-	Tone.Transport.start();
+	var chords = ["Dm", "Am", "E", "Am"];
+	[bass_notes, tenor_notes, alto_notes, soprano_notes] = GetNotes(chords);
+	
+	let bassloop = MakeLoop(bass, bass_notes);
+	let tenorloop = MakeLoop(tenor, tenor_notes);
+	let altoloop = MakeLoop(alto, alto_notes);
+	let sopranoloop = MakeLoop(soprano, soprano_notes);
 
 
-	var part = new Tone.Part(function(time, note){
-		synth.triggerAttackRelease(note, "8n", time);
-	}, [[0, "C2"], ["0:2", "C3"], ["0:3:2", "G2"]]);
-	part.start();
- 
+	$( "#startcanon").click(function () {
+
+		bassloop.start();
+		tenorloop.start();
+		altoloop.start();
+		sopranoloop.start();
+
+		Tone.Transport.start();
+	});
+	$( "#stopcanon" ).click(function() {
+		Tone.Transport.stop();
+	});
+
+
 
 });
-
