@@ -1,8 +1,15 @@
 ---
 title:  "Value Hierarchy Mapping"
-date:   2019-01-08 00:00:00
+date:   2019-06-11 00:00:00
 excerpt: "What do we care about?"
 ---
+
+# Update: I turned this into a website!
+
+While at the [Recurse Center](https://recurse.com), I re-wrote this to make it a website. You can see that [here](https://steampunc.com/values/index.html)
+
+
+# Original post:
 
 Hey! Been a while since I wrote something - sorry about that. Things have been very busy and changing, what with college and new developments in my life.
 
