@@ -2,8 +2,8 @@
 var comparison_value_graph = new Digraph();
 
 var value_list = [];
-const personal_value_list = ["Authenticity", "Curiosity", "Responsibility", "Knowledgeability", "Wiseness", "Activeness", "Positivity", "Lovingness"];
-const political_value_list = ["Environment","Healthcare","Immigration","Education","Trade", "High Tax"];
+const personal_value_list = ShuffleArray(["Authenticity", "Curiosity", "Responsibility", "Knowledge", "Wisdom", "Adventure", "Optimism", "Love"]);
+const political_value_list = ShuffleArray(["Environment","Healthcare","Military Strength","LGBTQ+ Rights","Religious Freedom", "Abortion Rights/Restrictions", "Gun Rights", "Taxes"]);
 
 
 var draggable_comparison = []; 
@@ -16,6 +16,8 @@ var have_saved_values = false;
 var have_taken_quiz = false;
 var started_comparison = false;
 var upload_vh = false;
+var past_value = "";
+var first_sending = true;
 
 function HandleRadioButton() {
 	var radioValue = $("input[name='value-type']:checked").val();
@@ -27,30 +29,70 @@ function HandleRadioButton() {
 		case "political": 
 			value_list = political_value_list;
 			break;
+		case "cyo-button":
+			var selected = [];
+			$('input.value-checkbox:checked').each(function() {
+				selected.push($(this).next("label").text());
+			});
+			value_list = selected;
+
+			break;
 		default: 
 			alert("Something went wrong! Please reload the page.");
 			break;
 	}
-	if (draggable_comparison.length == 0) {
+	if (draggable_comparison.length == 0 || past_value != radioValue) {
 		draggable_comparison = ShuffleArray(value_list);
 	}
-	if (value_comparisons.length == 0) {
+	if (value_comparisons.length == 0 || past_value != radioValue) {
 		value_comparisons = ShuffleArray(GetCombinations(value_list));
 	}
+	past_value = radioValue;
 }
 
 $(document).ready(function() {
+	var using_cyo = false;
 
 	$( ".completed-dragging" ).hide();
 	$( ".completed-comparison" ).hide();
 	$( ".completed-both" ).hide();
+	$( ".cyo-values" ).hide();
 
 	var vh_list = $( "#dragging-list" );
 	vh_list.sortable();
 	vh_list.disableSelection();
 
 	HideAllOtherPages($( "#main-page"));
-		
+
+	$('input.value-checkbox').on('change', function(evt) {
+		if($(this).siblings(':checked').length >= 10) {
+			this.checked = false;
+		}
+	});
+
+	$("input[name='value-type'").click(function(){
+
+		if ($('input[value="cyo-button"]').is(":checked")) {
+			using_cyo = true;
+			$( ".cyo-values" ).show();
+		} else {
+			using_cyo = false;
+			$( ".cyo-values" ).hide();
+		}
+		if ($('input[value="personal"]').is(":checked")) {
+			PopulateList(personal_value_list, $("#personal-values"));
+			$( "#personal-values" ).show();
+		} else {
+			$( "#personal-values" ).hide();
+		}
+		if ($('input[value="political"]').is(":checked")) {
+			PopulateList(political_value_list, $("#political-values"));
+			$( "#political-values" ).show();
+		} else {
+			$( "#political-values" ).hide();
+		}
+
+	});
 
 	$( ".ordering-test" ).click(function () {
 		HandleRadioButton();
@@ -65,12 +107,17 @@ $(document).ready(function() {
 
 	$( ".comparison-test" ).click(function () {
 		HandleRadioButton();
-		UpdateButtons();
-		HideAllOtherPages($( "#comparison-instructions"));
-		$( "#comparison-page" ).show();
-		if (need_to_save_values) {
-			draggable_comparison = ReadFromList(vh_list);
-			need_to_save_values = false;
+		if (!using_cyo || $('input.value-checkbox').siblings(':checked').length > 1) {
+			UpdateButtons();
+			HideAllOtherPages($( "#comparison-instructions"));
+			PopulateList(draggable_comparison, $( "#instruction-list" ));
+			$( "#comparison-page" ).show();
+			if (need_to_save_values) {
+				draggable_comparison = ReadFromList(vh_list);
+				need_to_save_values = false;
+			}
+		} else {
+			alert("Please select at least two from your custom values.");
 		}
 		
 		
@@ -149,9 +196,6 @@ $(document).keydown(function(e) {
 	e.preventDefault(); // prevent the default action (scroll / move caret)
 });
 
-// var value_comparisons;
-// var past_value_comparisons = [];
-
 var value_comparison = [];
 
 function HandleComparison(user_choice) {
@@ -210,6 +254,11 @@ function UpdateButtons() {
 		$( ".completed-both" ).show();
 		$( ".completed-comparison" ).hide();
 		$( ".completed-dragging" ).hide();
+	} else if (!have_saved_values && !have_taken_quiz) {
+		$( ".incomplete-comparison" ).show();
+		$( ".completed-both" ).hide();
+		$( ".completed-comparison" ).hide();
+		$( ".completed-dragging" ).hide();
 	
 	}
 }
@@ -217,11 +266,12 @@ function UpdateButtons() {
 function SendGraph() {
 	$.ajax({
 		type: "POST",
-		url: "http://finnboire.xyz",
+		url: "http://steampunc.com/values",
 		dataType: "json",
-		data:comparison_value_graph.getGraph()
+		data:{"comparison": comparison_value_graph.getGraph(), "dragged": draggable_comparison, "first_sending":first_sending}
 	});
 }
+
 
 function Analysis() {
 	$( "#comparison-page" ).hide();
@@ -252,6 +302,7 @@ function Analysis() {
 
 	if (upload_vh) {
 		SendGraph();
+		first_sending = false;
 	}
 
 	PopulateList(transitive_comparison, $(".compare-chart"));

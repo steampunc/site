@@ -22,23 +22,57 @@
 				
 				<p>Based off of two metrics, it asks you to rank a set of values by your gut "preference". This is a subjective ranking, but it's a subjective problem! Don't feel any pressure to get it exactly right - I hope that through the two methods, you'll get a better sense of what you value.</p>
 
-				Please select from below which set of values you would like to evaluate:
-				<p>
-				<input type="radio" name="value-type" value="personal" checked="checked"> Personal Values<br>
-				<input type="radio" name="value-type" value="political"> Political Values<br>
+				<p>Please select from below which set of values you would like to evaluate:</p>
+				<p class="selector">
+				<input type="radio" name="value-type" value="personal" checked="checked"> Default Personal Values<br>
+				<ul id="personal-values"></ul>
+				<input type="radio" name="value-type" value="political"> Default Political Values<br>
+				<ul id="political-values"></ul>
+				<input type="radio" name="value-type" value="cyo-button"> Choose Your Own<br>
 				</p>
 
+				<div class="cyo-values" visibility="hidden">
+					<p>These values were sourced from <a href="https://jamesclear.com/core-values">this website</a></p>
+					<p>Please select up to 10 from below.</p>
+					
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group1"> <label for="group1">Authenticity</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group2"> <label for="group2">Achievement</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group3"> <label for="group3">Adventure</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group5"> <label for="group5">Autonomy</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group6"> <label for="group6">Balance</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group7"> <label for="group7">Beauty</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group9"> <label for="group9">Compassion</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group10"> <label for="group10">Challenge</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group15"> <label for="group15">Creativity</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group16"> <label for="group16">Curiosity</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group21"> <label for="group21">Friendships</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group24"> <label for="group24">Happiness</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group29"> <label for="group29">Justice</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group30"> <label for="group30">Kindness</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group31"> <label for="group31">Knowledge</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group32"> <label for="group32">Leadership</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group33"> <label for="group33">Learning</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group34"> <label for="group34">Love</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group36"> <label for="group36">Meaning</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group38"> <label for="group38">Optimism</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group39"> <label for="group39">Peace</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group46"> <label for="group46">Respect</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group47"> <label for="group47">Responsibility</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group49"> <label for="group49">Self-Respect</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group51"> <label for="group51">Spirituality</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group52"> <label for="group52">Stability</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group53"> <label for="group53">Success</label><br>
+					<input class="value-checkbox"type="checkbox" name="value-checkbox" id="group57"> <label for="group57">Wisdom</label><br>
+				</div>
+
 				<div class="block button-area flex"> 
-					<button class="ordering-test">Drag and Drop Values</button>	
 					<button class="comparison-test">Compare Values</button>	
+					<button class="ordering-test completed-comparison">Drag and Drop Values</button>	
 					<button class="go-to-analysis completed-both">Go to Analysis</button>
 				</div>
 			</div>
 			<div class="block">
-				<div class="header">
-					<p>FAQ</p>
-				</div>
-				<p>This is a project made by Finn Boire, while at <a href="recurse.com">Recurse Center</a>. Below are some anticipated questions - if you have any others, feel free to <a href = "mailto:finn.boire@gmail.com?subject=Value Questions">contact me</a>.
+				<p>This is a project made by Finn Boire, while at the <a href="https://recurse.com">Recurse Center</a> - if you have any questions, feel free to <a href = "mailto:finn.boire@gmail.com?subject=Value Questions">contact me</a>.
 
 
 			</div>
@@ -68,9 +102,12 @@
 					<div class="header">
 						<p> Comparing Your Values </p>
 					</div>
-					<p>The beta version uses 8 basic values:
 
-					<p>You’ll be shown two values, one on the left side of your screen and one on the right side of your screen. Going largely by your initial reaction, use your keyboard arrow keys to select (i.e., point to) the value that is most important to you.</p>
+					<p>You will be comparing these values:</p>
+
+					<ul id="instruction-list"></ul>
+
+					<p>You’ll be shown two of the values above, one on the left side of your screen and one on the right side of your screen. Going largely by your initial reaction, use your keyboard arrow keys to select (i.e., point to) the value that is most important to you.</p>
 
 					<p>If you can’t decide which value is most important, use the down arrow, but whenever possible try and decide between the two.</p>
 					<p>If you want to undo your choice, use the up arrow.</p>
