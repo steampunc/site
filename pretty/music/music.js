@@ -1,99 +1,93 @@
+var mtools = new MusicTools();
+var num_voices = 4;
+var bpm = 120;
 
-var chord_tool = new Chordify();
-console.log(chord_tool.closestChordTone("A4", ["C", "E", "G"]));
+console.log(mtools.step("C4", -7));
 
-var options =  {
-	"oscillator" : {
-		"type" : "sawtooth"
-	},
-	"envelope" : {
-		"attack" : 0.1,
-		"decay" : 0.1
-	},
-	volume: 1,
-};
-
-
-function GetNotes(chords) {
-	var notes = chord_tool.getNotes(chords[0]);
-	bass_notes = [notes[0] + 3];
-	tenor_notes = [notes[1]+4]; 
-	alto_notes = [notes[2]+4];
-	soprano_notes = [];
-	for (var i = 1; i < chords.length; i++) {
-		notes = chord_tool.getNotes(chords[i]);
-
-		bass_notes.push(notes[0] + 3);
-		tenor_notes.push(chord_tool.closestChordTone(tenor_notes[tenor_notes.length - 1], notes));
-		alto_notes.push(chord_tool.closestChordTone(alto_notes[alto_notes.length - 1], notes));
-		
+function UpdateLoop(chords) {
+	chord_notes = [];
+	voices = [];
+	for (var i = 0; i < chords.length; i++) {
+		chord_notes[i] = mtools.chordNotes(chords[i]);
 	}
-	console.log(bass_notes);
-	console.log(tenor_notes);
-	console.log(alto_notes);
-	return [bass_notes, tenor_notes, alto_notes, soprano_notes];
+
+	for (var i = 0; i < num_voices; i++) {
+		voices.push([]);
+	}
+
+	// Restrictions 
+	// - No overlapping of voices
+	// - The order of precedence is that 1, 5, 3, (7), repeat
+	
+	// To simplify, we'll always start with the bass line on the 1 of the chord
+	console.log(voices);
+	
+	for (var voice_index = 0; voice_index < num_voices; voice_index++) {
+		
+		voices[voice_index][0] = 0;
+		for (var i = 1; i < chord_notes.length; i++) {
+
+
+		}
+	}
+
+	console.log(voices);
+	
+	
 }
 
-function MakeLoop(synth, notes) {
-	let loop = new Tone.Loop(time => {
-		var note = notes[Math.floor(time) % notes.length];
-		synth.triggerAttackRelease(note, 0.8);
+function Visualize(current_notes) {
+	ctx.drawImage(img, 0, 0);
+	ctx.fillStyle = 'gray';
+	for (var i = 0; i < current_notes.length; i++) {
+		ctx.fillRect(mtools.noteToNumber(current_notes[i]) - 107, 4, 12, img.height - 8);
+	}
+	
+}
 
+function MakeLoop(notes) {
+	var played_all_notes = false;
+	let loop = new Tone.Loop(time => {
+		if (played_all_notes) {
+			piano.stop();
+		}
+		for (var i = 0; i < notes.length; i++) {
+			piano.play(notes[i]);
+		}
+		played_all_notes = true;
 	}, "1m");
 	return loop;
-
 }
 
+var chords = ["Dm", "Am", "E", "Am"];
+
 $(document).ready(function() {
+	Tone.Transport.bpm.value = bpm;
+	UpdateLoop(chords);
+
 	var canvas = document.getElementById("piano-viz");
 	var ctx = canvas.getContext('2d');
 	var img = new Image();
+	img.src = 'piano.jpg';
+
 	img.onload = function() {
 		canvas.width = img.width;
 		canvas.height = img.height;
 		ctx.drawImage(img, 0, 0);
 	};
-	img.src = 'piano.jpg';
 
-	let bass = new Tone.MonoSynth(options);
-	let tenor = new Tone.MonoSynth(options);
-	let alto = new Tone.MonoSynth(options);
-	let soprano = new Tone.MonoSynth(options);
-	bass.toMaster();
-	tenor.toMaster();
-	alto.toMaster();
-	soprano.toMaster();
-
-	var chords = ["Dm", "Am", "E", "Am"];
-	[bass_notes, tenor_notes, alto_notes, soprano_notes] = GetNotes(chords);
-	
-	let bassloop = MakeLoop(bass, bass_notes);
-	let tenorloop = MakeLoop(tenor, tenor_notes);
-	let altoloop = MakeLoop(alto, alto_notes);
-	let sopranoloop = MakeLoop(soprano, soprano_notes);
-
-	Tone.Transport.schedule(function(time){
-		Tone.Draw.schedule(function(){
-			// each note is 12 pixels wide
-			ctx.fillStyle = 'gray';
-			ctx.fillRect(0, 0, 12, img.height - 2);
-		}, time)
-	}, "0")
-
-
-	$( "#startcanon").click(function () {
-
-		bassloop.start();
-		tenorloop.start();
-		altoloop.start();
-		sopranoloop.start();
-
-		Tone.Transport.start("+0.1");
-	});
-	$( "#stopcanon" ).click(function() {
-		Tone.Transport.stop();
+	$("#chords").on("keydown",function (event) {
+		if(event.key === 'Enter') {
+			chords = $("#chords").val().replace(/\s+/g, '').split(",");
+			UpdateLoop(chords);
+			console.log(chords);
+		}
 	});
 
+	Soundfont.instrument(new AudioContext(), 'acoustic_grand_piano').then(function (piano) {
+		piano.play("B3");
+		
+		Tone.Transport.start("+0.01");
 
-
+	});
 });

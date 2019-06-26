@@ -1,6 +1,6 @@
 
-class Chordify {
-	getNotes(chord) {
+class MusicTools {
+	chordNotes(chord) {
 		switch (chord) {
 			case "Ab": return ["Ab", "C", "Eb"]; break;
 			case "A": return ["A", "C#", "E"]; break;
@@ -82,6 +82,33 @@ class Chordify {
 			case "Cb": number += 11; break;
 		}
 		return number;
+	}
+
+	step(note, num_half_steps) {
+		return this.numToNote(this.noteToNumber(note) + num_half_steps);
+	}
+
+
+	numToNote(number) {
+		var note = "";
+		switch( number % 12) {
+			case 0: note = "C"; break; 
+			case 1: note = "Db"; break;
+			case 2: note = "D"; break;
+			case 3: note = "Eb"; break;
+			case 4: note = "E"; break;
+			case 5: note = "F"; break;
+			case 6: note = "Gb"; break;
+			case 7: note = "G"; break;
+			case 8: note = "Ab"; break;
+			case 9: note = "A"; break;
+			case 10: note = "Bb"; break;
+			case 11: note = "B"; break;
+		}
+
+		note = note + Math.max(((number - (number % 12))/12), 0);
+		return note;
+		
 	}
 
 	closestNote(current_note, target) {
