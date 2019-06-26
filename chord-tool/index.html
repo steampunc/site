@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Finn Boire</title>
+		<link rel="stylesheet" href="style.css">
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="data.js"></script>
+
+		<link href='https://fonts.googleapis.com/css?family=Balthazar' rel='stylesheet'>
+
+	</head>
+	<body>
+		<div class="wrapper">
+			<a id="site-title" href="./index.html">Finn Boire</a>
+			<hr></hr>
+			<div class="content">
+				<p style="font-size:1.3em">Markov Writer: Generates chord progressions with Markov chains.</p>
+				<hr></hr>
+				<div id="suggestor-app">
+					<p>Give me an initial chord:</p>
+					<input type="text" name="initial-chord" placeholder="Starting Chord" v-model="initial_chord"><br>
+					<p>Chords to avoid, separated by commas:</p>
+					<input type="text" name="avoid-chords" placeholder="None" v-model="avoids"><br>
+					<p>I recommend that you avoid C, G, and D because they show up a lot. Most chords exist within the database, so feel free to prompt it with some jazzy stuff!</p>
+					<p>Progression length: {{ num_chords }} chords </p>
+					<input type="range" name="num-chords" min=2 max=30 v-model="num_chords"><br>
+					<button v-on:click="generate">Generate Chord Progression</button>
+
+					<p></p>
+					<div v-if="chords.length > 0">
+						<p>Chord progression:</p>
+						<span v-for="(chord, chord_index) in chords">
+							<span>{{chord}}</span><span v-if="chord_index+1 < chords.length">, </span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="./page.js"></script>
+	</body>
+</html>

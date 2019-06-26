@@ -25,9 +25,9 @@ shutil.copyfile("utils/style.css", "_site/blog/style.css")
 shutil.copyfile("backend.js", "_site/backend.js")
 shutil.copyfile("utils/style.css", "_site/style.css")
 shutil.copytree("values/", "_site/values")
+shutil.copytree("chord-tool/", "_site/chord-tool")
+shutil.copyfile("utils/style.css", "_site/chord-tool/style.css")
 shutil.copytree("pretty/", "_site/pretty")
-
-
 
 header = ""
 footer = ""
@@ -43,6 +43,7 @@ with open("./index.html", "r") as main_page:
     current_page(".content").append(footer)
     with open("_site/index.html", "w") as writing_page:
         writing_page.write(str(current_page))
+
     
 with open("./blog/index.html", "r") as blog_page:
     page = pq(blog_page.read())

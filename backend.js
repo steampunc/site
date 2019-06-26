@@ -9,5 +9,10 @@ app.get("/", function(request, response) {
 	response.sendFile(path.join(__dirname + "/index.html"));
 });
 
+app.get("/chord-tool", function(request, response) {
+
+	response.sendFile(path.join(__dirname + "/chord-tool/index.html"));
+});
+
 app.listen(8080);
 console.log("Listening on 8080");
