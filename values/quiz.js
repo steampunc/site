@@ -2,7 +2,7 @@
 var comparison_value_graph = new Digraph();
 
 var value_list = [];
-const personal_value_list = ShuffleArray(["Authenticity", "Curiosity", "Responsibility", "Knowledge", "Wisdom", "Adventure", "Optimism", "Love"]);
+const personal_value_list = ShuffleArray(["Authenticity", "Curiosity", "Responsibility", "Knowledge", "Wisdom", "Adventure", "Optimism", "Love", "Compassion"]);
 const political_value_list = ShuffleArray(["Environment","Healthcare","Military Strength","LGBTQ+ Rights","Religious Freedom", "Abortion Rights/Restrictions", "Gun Rights", "Taxes"]);
 
 
@@ -140,6 +140,9 @@ $(document).ready(function() {
 		UpdateButtons();
 
 		upload_vh = confirm("If you click ok, you consent to anonymously uploading your value hierarchy to a database so we can perform interesting analysis. If you hit cancel, we won't do anything with your data, and you can still take the test. Either way, it's anonymous.");
+		if (upload_vh) {
+			$(".send-me-values").hide();
+		}
 
 		HideAllOtherPages($( "#comparison-body"));
 		$( "#comparison-page" ).show();
@@ -152,11 +155,25 @@ $(document).ready(function() {
 			
 	});
 
+	$( ".send-me-values" ).click(function() {
+		upload_vh = true;	
+		$(".send-me-values").hide();
+		Analysis();
+	});
+
 	$( ".go-to-analysis" ).click(function() {
+		draggable_comparison = ReadFromList(vh_list);
 		UpdateButtons();
 	
 		HideAllOtherPages($( "analysis-page"));
 		Analysis();
+	});
+
+	$( "#left-centered" ).click(function() {
+		HandleComparison("L");
+	});
+	$( "#right-centered" ).click(function() {
+		HandleComparison("R");
 	});
 
 });
@@ -227,7 +244,14 @@ function HandleComparison(user_choice) {
 			started_comparison = false;
 
 
-			Analysis();
+			HandleRadioButton();
+			UpdateButtons();
+			need_to_save_values = true;
+			have_saved_values = true;
+			HideAllOtherPages($( "#ordering-page"));
+
+			PopulateList(draggable_comparison, $( "#dragging-list" ));
+
 
 		} else {
 			past_value_comparisons.push(value_comparison);
