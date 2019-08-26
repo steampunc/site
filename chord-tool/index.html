@@ -1,4 +1,4 @@
-<!doctype html>
+<doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -17,14 +17,20 @@
 			<div class="content">
 				<p style="font-size:1.3em">Markov Writer: Generates chord progressions with Markov chains.</p>
 				<hr></hr>
-				<div id="suggestor-app">
+				<div id="markov-app">
 					<p>Give me an initial chord:</p>
-					<input type="text" name="initial-chord" placeholder="Starting Chord" v-model="initial_chord"><br>
+					<input type="text" name="init-chord" placeholder="Starting Chord" v-model="init_chord">
+					<input type="text" name="dest-chord" placeholder="(Optional) Destination Chord" v-model="dest_chord"><br>
 					<p>Chords to avoid, separated by commas:</p>
-					<input type="text" name="avoid-chords" placeholder="None" v-model="avoids"><br>
+					<input type="text" id="avoid-chords" placeholder="None" v-model="avoids"><br>
 					<p>I recommend that you avoid C, G, and D because they show up a lot. Most chords exist within the database, so feel free to prompt it with some jazzy stuff!</p>
-					<p>Progression length: {{ num_chords }} chords </p>
-					<input type="range" name="num-chords" min=2 max=30 v-model="num_chords"><br>
+					<p>To avoid <em>many</em> chords and make the progressions more jazzy, click this checkbox: <input type="checkbox" v-on:click="clicked_check" v-model="ignore_clicked"></p>
+					<p>The best results I've gotten that are consistently pretty good come from an initial chord of Bbmaj7 and avoiding a lot of chords</p>
+
+					<div v-if="dest_chord == null || dest_chord == '' ">
+						<p>Progression length: {{ num_chords }} chords </p>
+						<input type="range" name="num-chords" min=2 max=30 v-model="num_chords"><br>
+					</div>
 					<button v-on:click="generate">Generate Chord Progression</button>
 
 					<p></p>
