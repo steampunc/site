@@ -28,7 +28,7 @@ body {
 
 a {
 	text-decoration: none;
-	color: #770000;
+	color: #0000a5;
 }
 
 /* Blog post list formatting */
@@ -60,3 +60,19 @@ a {
 	margin-bottom:10px;
 	color: #555555;
 }
+
+code {
+	border-radius: 2px;
+	padding:2px;
+	background-color: #bbbbbb;
+	white-space:nowrap;
+}
+
+#code-block {
+	width: 100%;
+	border-radius: 2px;
+	padding:2px;
+	background-color: #bbbbbb;
+	overflow-x:scroll;
+}
+
