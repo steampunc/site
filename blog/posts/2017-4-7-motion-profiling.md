@@ -13,14 +13,14 @@ Motion profiling is the practice of setting non-static goals for a system to red
 When you have a system which doesn't profile its goals, it ends up getting given unrealistic goals and causes motors and inputs to suffer. One example, from Citrus Circuits' 2016 robot Adrian, was the large pivot arm. With so much mass, the arm put serious strain on the physical components of the robot, like the central shaft on the pivot, and on the motors, which contributed to them breaking multiple times. You can see this in Fig. 1 an image of the time the central shaft of the pivot sheared completely through, due to slight imperfections in manufacturing along with repeated heavy stress on the part.
 
 <center>
-<img src="../attachments/profiling/bad_profiling.jpg"/>
+<img src="../attachments/profiling/bad_profiling.jpg" style="max-width: 100%;"/>
 </center>
 <br>
 
 Programmatically, systems without motion profiling are simple. You set a goal, the controller responds by trying to make the system converge towards the goal, giving it a voltage or input which was tuned by a person to make it converge most effectively. Below, in Figure 2, is a graph of modeled system responding to an unprofiled system:
 
 <center>
-<img src="../attachments/profiling/unprofiled_drivetrain.png"/>
+<img src="../attachments/profiling/unprofiled_drivetrain.png" style="max-width: 100%;"/>
 </center>
 <br>
 
@@ -32,7 +32,7 @@ To solve these problems, you can profile the goal, accounting for the maximum ac
 You have two constraints: $$a_{max}$$ and $$v_{max}$$. When you are given a goal distance $$d_{goal}$$, the distance under the velocity profile must equal this distance, or $$\int_{0}^{t_{total}}{(v)dt} = d_{goal}$$. Don't get worried, because although calculus can indeed be used as a way to determine the constraints of the profile more intuitively and easily, you can also use simple geometry and kinematic equations. Instead of contemplating this integral, we can break down the trapezoid into multiple parts; the acceleration, cruising, and deceleration.
 
 <center>
-<img src="../attachments/profiling/trap_labels.png"/>
+<img src="../attachments/profiling/trap_labels.png" style="max-width: 100%;"/>
 </center>
 
 We need to find first the times it takes to accelerate and decelerate, and identify the distance that we travel in that time. Since you know the slope of the line $$a_{max}$$, and you know the starting point, some $$v_s$$, and the maximum velocity $$v_{max}$$, you can figure out the time travelled by considering the time $$t_a * a_{max}$$ to be equal to the difference between $$v_s$$ and $$v_{max}$$. You can do the same for the deceleration time, but with an ending velocity $$v_e$$ instead.
