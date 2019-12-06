@@ -10,8 +10,8 @@ var rightClick=false;
 var px = 0;
 var py = 0;
 var EXP = 2.71828;
-var density = canvas.width / 2;
-var length = 4;
+var density = canvas.width / 3;
+var stretch = canvas.width / density;
 
 function sorter(p1, p2) {
     return p1.x - p2.x;
@@ -31,10 +31,10 @@ class Line {
 	this.height = height;
 	this.width = width;
 	this.pointList = [new Point(0, height / 2, false), 
-	    new Point(width / 3, height / 2, true),
+	/*    new Point(width / 3, height / 2, true),
 	    new Point(width / 3, height / 3, true),
 	    new Point(width * 2 / 3, height / 3, true),
-	    new Point(width * 2 / 3, height / 2, true),
+	    new Point(width * 2 / 3, height / 2, true), */
 	    new Point(width, height / 2, false)];
     }
 
@@ -116,43 +116,79 @@ class Line {
 
 }
 
+class Complex {
+    constructor(r, im) {
+	this.r = r;
+	this.im = im;
+    }
+    
+    mag() {
+	return Math.sqrt(this.r * this.r + this.im * this.im);
+    }
+
+    conj() {
+	return new Complex(this.r, -this.im);
+    }
+
+    add(num) {
+	return new Complex(this.r + num.r, this.im + num.im);
+    }
+
+    multiply(num) {
+	return new Complex(this.r * num, this.im * num);
+    }
+}
+
 class Wavefunction {
     constructor() {
 	this.wf = [];
 	for (var x = 0; x < density; x++) {
 	    var pos = (x / density - 1/2);
 	    var width = 0.01;
-	    this.wf.push(10 * Math.pow(EXP, - pos * pos / width));
-	    this.dt = 0.5;
+	    //this.wf.push(new Complex(Math.sin(x * 3.1415926 / density), 0));
+	    this.wf.push(new Complex(Math.pow(EXP, - pos * pos / width), 0));
+	    //var coord = ((x * 10 / density) - 0.9) * 2;
+	    //this.wf.push(new Complex(Math.pow(EXP, - coord * coord), Math.pow(EXP, -coord * coord)));
 	    this.time = 0;
 	}
     }
 
     evolve() {
-	var prev = this.wf[1];
-	if (this.time < 1) {
-	    prev = 10 * Math.pow(EXP, 2 - this.time * this.time);
-	}
-	
-	var prevstep = 0;
-	var makesmall = false
-	for (var i = 1; i < this.wf.length; i++) {
-	    var mid = this.wf[i];
-	    var next = this.wf[i+1];
-	    if (next == null) {
-		next = prev;
+	var newWf = [];
+	for (var i = 0; i < density; i++) {
+	    var step = 0; 
+	    if (i == 0) {
+		step = this.wf[i + 1].add(this.wf[i + 1]).add(this.wf[i].multiply(-2).multiply(0.5)); 
+	    } else if (i == density - 1) {
+		step = this.wf[i - 1].add(this.wf[i - 1]).add(this.wf[i].multiply(-2).multiply(0.5)); 
+	    } else {
+		step = this.wf[i - 1].add(this.wf[i + 1]).add(this.wf[i].multiply(-2).multiply(0.5)); 
 	    }
-	    var step = (2 * mid - next - prev) * this.dt;
-	    this.wf[i] += -step;
-	    prev = mid;
+	    step = step.multiply(0.01);
+	    newWf.push(this.wf[i].add(new Complex(-step.im, step.r)));	    
 	}
-	this.time += 0.001;
+	newWf.push(newWf[density - 1]);
+	this.wf = newWf;
+	this.time += 0.01;
     }
 
-    displayProbs() {
-	var stretch = canvas.width / density;
+    display(prob) {
+	var mags = [];
 	for (var i = 0; i < this.wf.length; i++) {
-	    ctx.fillRect(stretch * i, canvas.height / 2 - (this.wf[i] * this.wf[i]), stretch, 1);
+	    mags.push(Math.pow(this.wf[i].mag(), 2));
+	}
+	var scale = canvas.height / (2.5 * Math.max.apply(Math, mags));
+
+	for (var i = 0; i < this.wf.length - 1; i++) {
+	    if (prob) {
+		var p1 = new Point(stretch * i, canvas.height / 2 - 70 * mags[i]);
+		var p2 = new Point(stretch * (i + 1), canvas.height / 2 - 70 * mags[i + 1]);
+		lines.drawSegment(p1, p2);
+	    } else {
+		var p1 = new Point(stretch * i, canvas.height / 2 - scale * this.wf[i].r);
+		var p2 = new Point(stretch * (i + 1), canvas.height / 2 - scale * this.wf[i + 1].r);
+		lines.drawSegment(p1, p2);
+	    }
 	}
     }
 }
@@ -188,21 +224,36 @@ function handleMouseMove(e){
 }
 
 var lines = new Line(canvas.width, canvas.height);
-lines.draw();
 var wavefunction = new Wavefunction();
-wavefunction.displayProbs();
+
+var showingProbs = true;
+function redraw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    lines.draw();
+    wavefunction.display(showingProbs);
+}
+
+redraw();
+
 
 
 $("#display").mousedown(function(e){handleMouseDown(e);});
 $("#display").mousemove(function(e){handleMouseMove(e);});
 $("#display").mouseup(function(e){handleMouseUp(e);});
 $("#display").mouseout(function(e){handleMouseOut(e);});
+
+$("#dispProbs").click(function() {
+    showingProbs = !showingProbs;    
+    redraw();
+});
+
+var currRun = null;
 $("#fire").click(function() {
+    clearInterval(currRun);
+    wavefunction = new Wavefunction();
     wavefunction.time = 0;
-    setInterval(function () {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	lines.draw();
+    currRun = setInterval(function () {
 	wavefunction.evolve();
-	wavefunction.displayProbs();
-    }, 0.001);
+	redraw();
+    }, 0.01);
 });
