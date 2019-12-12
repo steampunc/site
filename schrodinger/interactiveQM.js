@@ -17,7 +17,6 @@ function sorter(p1, p2) {
     return p1.x - p2.x;
 }
 
-
 class Point {
     constructor(x, y, draggable) {
 	this.x = x;
@@ -130,8 +129,8 @@ class Complex {
 	return new Complex(this.r, -this.im);
     }
 
-    add(num) {
-	return new Complex(this.r + num.r, this.im + num.im);
+    add(cNum) {
+	return new Complex(this.r + cNum.r, this.im + cNum.im);
     }
 
     multiply(num) {
@@ -142,6 +141,7 @@ class Complex {
 class Wavefunction {
     constructor() {
 	this.wf = [];
+	this.pastSteps = [];
 	for (var x = 0; x < density; x++) {
 	    var pos = (x / density - 1/2);
 	    var width = 0.01;
@@ -150,24 +150,24 @@ class Wavefunction {
 	    //var coord = ((x * 10 / density) - 0.9) * 2;
 	    //this.wf.push(new Complex(Math.pow(EXP, - coord * coord), Math.pow(EXP, -coord * coord)));
 	    this.time = 0;
+	    this.pastSteps.push(new Complex(0,0));
 	}
     }
 
     evolve() {
-	var newWf = [];
-	for (var i = 0; i < density; i++) {
+	var newWf = [new Complex(0, 0)];
+	for (var i = 1; i < density - 1; i++) {
 	    var step = 0; 
-	    if (i == 0) {
-		step = this.wf[i + 1].add(this.wf[i + 1]).add(this.wf[i].multiply(-2).multiply(0.5)); 
-	    } else if (i == density - 1) {
-		step = this.wf[i - 1].add(this.wf[i - 1]).add(this.wf[i].multiply(-2).multiply(0.5)); 
-	    } else {
-		step = this.wf[i - 1].add(this.wf[i + 1]).add(this.wf[i].multiply(-2).multiply(0.5)); 
+	    step = this.wf[i - 1].add(this.wf[i + 1]).add(this.wf[i].multiply(-2));
+	    if (step.mag() > 0.01) {
+		step.multiply(0.01);
+	    } else if (step.mag() < this.wf[i].mag() * 0.0001) {
+		step.multiply(0);
 	    }
-	    step = step.multiply(0.01);
 	    newWf.push(this.wf[i].add(new Complex(-step.im, step.r)));	    
+	    this.pastSteps[i] = step;
 	}
-	newWf.push(newWf[density - 1]);
+	newWf.push(new Complex(0, 0));
 	this.wf = newWf;
 	this.time += 0.01;
     }
