@@ -11,7 +11,7 @@ var rightClick=false;
 var px = 0;
 var py = 0;
 var EXP = 2.71828;
-var density = canvas.width / 10;
+var density = canvas.width / 50;
 var stretch = canvas.width / density;
 
 function sorter(p1, p2) {
@@ -31,7 +31,7 @@ class Line {
 	this.height = height;
 	this.width = width;
 	this.pointList = [new Point(0, height / 2, false), 
-	/*    new Point(width / 3, height / 2, true),
+	    /*    new Point(width / 3, height / 2, true),
 	    new Point(width / 3, height / 3, true),
 	    new Point(width * 2 / 3, height / 3, true),
 	    new Point(width * 2 / 3, height / 2, true), */
@@ -63,7 +63,7 @@ class Line {
 	this.pointList.sort(sorter);
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	this.draw();
-	
+
     }
 
     doDrag(x, y, right) {
@@ -97,16 +97,9 @@ class Line {
 	return [closest, cDist];
     }
 
-    drawSegment(p1, p2) {
-	ctx.beginPath();
-	ctx.moveTo(p1.x, p1.y);
-	ctx.lineTo(p2.x, p2.y);
-	ctx.stroke();
-    }
-
     draw() {
 	for (var i = 0; i < this.pointList.length - 1; i++) {
-	    this.drawSegment(this.pointList[i], this.pointList[i + 1]);	    
+	    drawSegment(this.pointList[i], this.pointList[i + 1]);	    
 	}
     }
 
@@ -123,7 +116,7 @@ class Complex {
 	this.r = r;
 	this.im = im;
     }
-    
+
     mag() {
 	return Math.sqrt(this.r * this.r + this.im * this.im);
     }
@@ -138,7 +131,7 @@ class Complex {
 
     addInv(cNum) {
 	return new Complex(this.r - cNum.im, this.im + cNum.r);
-	
+
     }
 
     sub(cNum) {
@@ -158,27 +151,48 @@ class Complex {
     }
 }
 
-function plotArray(array, height, scale) {
-    for (var i = 0; i < density + 1; i++) {
-	var p1 = new Point(stretch * i, canvas.height * height - scale * array[i]);
-	var p2 = new Point(stretch * (i + 1), canvas.height * height - scale * array[i + 1]);
-	lines.drawSegment(p1, p2);
-    }
-
+function drawSegment(p1, p2) {
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
 }
 
 
+function dispCArray(array, vertPos, scale) {
+    var reals = [];
+    for (var i = 0; i < array.length; i++) {
+	reals.push(array[i].r);
+    }
+    displayArray(reals, vertPos, scale);
+}
+
+function displayDenseArray(array, vertPos, scale) {
+    var step = array.length / canvas.width
+    for (var i = 0; i < canvas.width; i++) {
+	ctx.fillRect(i, canvas.height * (1 - vertPos) - array[Math.floor(step * i)] * scale, 1, 1);
+    }
+}
+
+function displayArray(array, vertPos, scale) {
+    var stretchingFactor = canvas.width / (array.length - 1);
+    var step = 1;
+    if (stretchingFactor <= 1) {
+	displayDenseArray(array, vertPos, scale);	
+	return;
+    }
+    for (var i = 0; i < array.length - 1; i += step) {
+	var p1 = new Point(i * stretchingFactor, canvas.height * (1 - vertPos) - array[i] * scale, false);
+	var p2 = new Point((i + 1) * stretchingFactor, canvas.height * (1 - vertPos) - array[i + 1] * scale, false);
+	drawSegment(p1, p2);
+    }
+}
+
 class Wavefunction {
-    constructor() {
-	this.wf = [];
+    constructor(array) {
+	this.wf = array;
 	var sum = 0;
 	for (var x = 0; x < density + 1; x++) {
-	    var pos = (x / density - 1/2);
-	    var width = 0.01;
-	    //this.wf.push(new Complex(Math.sin(x * 3.1415926 / density), 0));
-	    //this.wf.push(new Complex(Math.pow(EXP, - pos * pos / width), 0));
-	    var coord = ((x * 10 / density) - 0.9) * 2;
-	    this.wf.push(new Complex(Math.pow(EXP, - coord * coord), Math.pow(EXP, -coord * coord)));
 	    this.time = 0;
 	    this.dt = 1.0;
 	    sum += this.wf[x].mag();
@@ -189,25 +203,49 @@ class Wavefunction {
 	}
     }
 
+    setWf(array) {
+	this.wf = array;
+	var sum = 0;
+	for (var i = 0; i < density + 1; i++) {
+	    sum += this.wf[i].mag();
+	}
+	for (var i = 0; i < density + 1; i++) {
+	    this.wf[i] = this.wf[i].multiply(1/sum);    
+	}
+    }
+
     secDer(wf, i, diff, scale) {
 	var nums = [];
-	var lower = -2;
-	var upper = 2;
+	var lower = -3;
+	var upper = 3;
 	if (i == 0) {
 	    lower = 0;
 	    var d = wf[0].sub(wf[1]);
 	    var left = wf[0].add(d);
-	    nums.push(left.add(d));
+	    var lleft = left.add(d);
+	    nums.push(lleft.add(d));
+	    nums.push(lleft);
 	    nums.push(left);
 	}
 	if (i == 1) {
+	    var d = wf[0].sub(wf[1]);
 	    var left = wf[0].add(wf[0].sub(wf[1]));
+	    nums.push(left.add(d));
 	    nums.push(left);
 	    lower = -1;
 	}
+	if (i == 2) {
+	    var left = wf[0].add(wf[0].sub(wf[1]));
+	    nums.push(left);
+	    lower = -2;
+	}
+	if (i == density - 2) {
+	    upper = 2;
+
+	}
 	if (i == density - 1) {
 	    upper = 1;
-	    
+
 	}
 	if (i == density) {
 	    upper = 0;
@@ -222,11 +260,18 @@ class Wavefunction {
 	if (upper == 0) {
 	    var d = wf[i].sub(wf[i-1]);
 	    var right = wf[i].add(d);
+	    var rright = right.add(d);
 	    nums.push(right);
-	    nums.push(right.add(d));
+	    nums.push(rright);
+	    nums.push(rright.add(d));
 	} else if (upper == 1) {
 	    var d = wf[i + 1].sub(wf[i]);
-	    var right = wf[i + 1].add(d);
+	    var right = wf[i+1].add(d);
+	    nums.push(right);
+	    nums.push(right.add(d));
+	} else if (upper == 2) {
+	    var d = wf[i + 2].sub(wf[i + 1]);
+	    var right = wf[i + 2].add(d);
 	    nums.push(right);
 	}
 
@@ -234,16 +279,16 @@ class Wavefunction {
     }
 
     calcSecDir(nums) {
-	var ll = nums[0].multiply(-1);
-	var l = nums[1].multiply(16);
-	var m = nums[2].multiply(-30);
-	var r = nums[3].multiply(16);
-	var rr = nums[4].multiply(-1);
-	var ld = nums[0].add(nums[2]).add(nums[1].multiply(-2));
-	var rd = nums[4].add(nums[2]).add(nums[3].multiply(-2));
-	var md = nums[1].add(nums[3]).add(nums[2].multiply(-2));
-	var fd = (ll.add(l).add(m).add(r).add(rr)).multiply(1/12);
-	return md;
+	var lll = nums[0].multiply(2);
+	var ll = nums[1].multiply(-27);
+	var l = nums[2].multiply(270);
+	var m = nums[3].multiply(-490);
+	var r = nums[4].multiply(270);
+	var rr = nums[5].multiply(-27);
+	var rrr = nums[6].multiply(2);
+	var fd = (lll.add(ll).add(l).add(m).add(r).add(rr).add(rrr)).multiply(1/180)
+	var ffd = ((nums[1].multiply(-1)).add(nums[2].multiply(16)).add(nums[3].multiply(-30)).add(nums[4].multiply(16)).add(nums[5].multiply(-1))).multiply(1/12);
+	return ffd;
     }
 
     smoothify(array) {
@@ -256,7 +301,6 @@ class Wavefunction {
 	}
 	smoothed.push(this.avg(window));
 	smoothed.push(array[array.length - 1]);
-	console.log(smoothed);
 	return smoothed;
     }
 
@@ -277,22 +321,20 @@ class Wavefunction {
 	for (var i = 0; i < density + 1; i++) {
 	    k1.push(this.secDer(this.wf, i, 0, 1).multiply(this.dt));
 	}
-	k1 = this.smoothify(k1);
 	for (var i = 0; i < density + 1; i++) {
 	    k2.push(this.secDer(this.wf, i, k1, 1).multiply(this.dt));
 	}
-	k2 = this.smoothify(k2);
 	var sum = 0;
 	// Calculate steps;
 	for (var i = 0; i < density + 1; i++) {
 	    var heun = (k1[i].add(k2[i])).multiply(0.5);
 	    dbg.push(heun.r);
 	    var euler = k1[i]
-	    var heunDiff = this.wf[i].addInv(heun).multiply(0.999);
+	    var heunDiff = this.wf[i].addInv(heun);
 	    var eulerDiff = this.wf[i].addInv(euler);
 	    var error = heunDiff.sub(eulerDiff).mag();
 	    if (error > errorTol) {
-		console.log("Adjusting error");
+		// Adjusting error and recalculating if it's too bad
 		this.dt = 0.9 * this.dt * Math.min(
 		    Math.max(Math.sqrt(errorTol / (2 * error)), 0.3), 1.3)
 		this.evolve();
@@ -305,11 +347,12 @@ class Wavefunction {
 	this.dt = 0.9 * this.dt * Math.min(
 	    Math.max(Math.sqrt(errorTol / (2 * error)), 0.3), 1.3)
 	this.wf = tempWf;
-	// Renormalize
+
+	// Renormalize the wf
 	for (var i = 0; i < density + 1; i++) {
 	    this.wf[i] = this.wf[i].multiply(1/Math.sqrt(sum));    
 	}
-	console.log(sum);
+
 	this.time += this.dt;
     }
 
@@ -319,20 +362,12 @@ class Wavefunction {
 	    mags.push(Math.pow(this.wf[i].mag(), 2));
 	}
 	var scale = canvas.height / (2.5 * Math.max.apply(Math, mags));
-
-	for (var i = 0; i < this.wf.length; i++) {
-	    if (i < this.wf.length - 1) {
-		if (prob) {
-		    var p1 = new Point(stretch * i, canvas.height / 2 - scale * mags[i]);
-		    var p2 = new Point(stretch * (i + 1), canvas.height / 2 - scale * mags[i + 1]);
-		    lines.drawSegment(p1, p2);
-		} else {
-		    var p1 = new Point(stretch * i, canvas.height / 2 - 10 * Math.sqrt(scale) * this.wf[i].r);
-		    var p2 = new Point(stretch * (i + 1), canvas.height / 2 - 10 * Math.sqrt(scale) * this.wf[i + 1].r);
-		    lines.drawSegment(p1, p2);
-		}
-	    }
+	if (prob) {
+	    displayArray(mags, 0.5, scale);
+	} else {
+	    dispCArray(this.wf, 0.5, 10 * Math.sqrt(scale));
 	}
+
     }
 }
 
@@ -365,38 +400,65 @@ function handleMouseMove(e){
 	lines.doDrag(canMouseX, canMouseY, rightClick);
     }
 }
+var gaussianCentered = [];
+var gaussianOff = [];
+var sine = [];
+var fullsine = [];
+for (var i = 0; i < density + 1; i++) {
+    var pos = (i / density - 1/2);
+    gaussianCentered.push(new Complex(Math.pow(EXP, - pos * pos / 0.01), 0));
+    sine.push(new Complex(Math.sin(i * Math.PI / density), 0));
+    fullsine.push(new Complex(Math.sin(2 * i * Math.PI / density), 0))
+    var offsetCoord = ((i * 10 / density) - 0.9) * 2;
+    gaussianOff.push(new Complex(Math.pow(EXP, - offsetCoord * offsetCoord), Math.pow(EXP, -offsetCoord * offsetCoord)));
+}
+
+var wfs = [['Centered "Gaussian"', gaussianCentered], ['Offset "Gaussian"', gaussianOff], ["Ground Frequency", sine], ["Second Frequency", fullsine]]
+var currWf = 2;
 
 var lines = new Line(canvas.width, canvas.height);
-var wavefunction = new Wavefunction();
+var wavefunction = new Wavefunction(wfs[currWf][1]);
 
-var showingProbs = false;
+
 function redraw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     lines.draw();
     wavefunction.display(showingProbs);
 }
 
-redraw();
-
-
-
 $("#display").mousedown(function(e){handleMouseDown(e);});
 $("#display").mousemove(function(e){handleMouseMove(e);});
 $("#display").mouseup(function(e){handleMouseUp(e);});
 $("#display").mouseout(function(e){handleMouseOut(e);});
 
+var showingProbs = true;
+var currRun = null;
+
 $("#dispProbs").click(function() {
     showingProbs = !showingProbs;    
     redraw();
+    $(this).text(showingProbs ? "Click to display real component of wavefunction" : "Click to display probability");
+});
+$("#dispProbs").text(showingProbs ? "Click to display real component of wavefunction" : "Click to display probability");
+
+$("#changeWavefunction").click(function() {
+    clearInterval(currRun);
+    currWf = (currWf + 1) % wfs.length;
+    wavefunction = new Wavefunction(wfs[currWf][1]);
+    $("#currWf").text("Current Wavefunction: " + wfs[currWf][0]);
+    redraw();
 });
 
-var currRun = null;
+$("#currWf").text("Current Wavefunction: " + wfs[currWf][0]);
+
+redraw();
 $("#fire").click(function() {
-    waveFunction = new Wavefunction();
-    console.log("RESET");
+    clearInterval(currRun);
+    wavefunction = new Wavefunction(wfs[currWf][1]);
+    wavefunction.time = 0;
     clearInterval(currRun);
     currRun = setInterval(function() {
 	wavefunction.evolve();
 	redraw();
-    }, 1);
+    }, 10);
 });

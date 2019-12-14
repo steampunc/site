@@ -28,6 +28,7 @@ shutil.copytree("values/", "_site/values")
 shutil.copytree("chord-tool/", "_site/chord-tool")
 shutil.copyfile("utils/style.css", "_site/chord-tool/style.css")
 shutil.copytree("pretty/", "_site/pretty")
+shutil.copytree("schrodinger/", "_site/schrodinger")
 shutil.copytree("blog/attachments/", "_site/blog/attachments")
 
 header = ""

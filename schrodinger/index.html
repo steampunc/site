@@ -3,6 +3,13 @@
 	<head>
 		<meta charset="utf-8">
 		<title>QM Bounce</title>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+		</script>
+		<script type="text/javascript"
+				src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+		<link rel="stylesheet" href="../style.css">
 		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 		<style>
 html, body {
@@ -13,11 +20,30 @@ html, body {
 		</style>
 	</head>
 	<body >
-		<canvas oncontextmenu="return false;" id="display" width="900" height="400" style="border:1px black solid"></canvas>
+		<div class="wrapper">
+			<div class="content">
+				<canvas oncontextmenu="return false;" id="display" width="900" height="400" style="border:1px black solid"></canvas>
+				<p id="currWf">Current Wavefunction: </p>
 
-		<p>Left click on the line to add an obstacle, right click to delete it.</p>
-		<button type="button" id="fire">Send pulse!</button>
-		<button type="button" id="dispProbs">Display Probabilities vs Real component of wf</button>
+				<p> This is a numerical simulation of a particle in a box with an initial wavefunction as specified above, directly integrating Schrodinger's equation over time using a low order Runge-Kutta method. </p>
+				<button type="button" id="fire">Start Simulation!</button>
+				<button type="button" id="dispProbs"></button>
+				<button type="button" id="changeWavefunction">Change wavefunction</button>
+
+				<p> Unfortunately, even after trying for several days I've been unable to get rid of the noise that shows up in the numerical derivatives, and it kind of makes the rest of the project impossible. My initial goal was to have you specify a potential function by clicking on the canvas and drawing it, then sending a gaussian packet towards the potential and seeing what happens (maybe even quantifiying the amount transmitted vs. reflected). The drawing functionality works, if you want to try it out (left click places a point, right click removes it), but I didn't implement its interaction with the wavefunction because there were too many other problems I was tring to fix with the dynamics of the wavefunction. This interaction with a dynamic potential was why I was numerically integrating the PDE rather than decomposing it into a bunch of energy eigenstates and using that for the time evolution. </p>
+				<a href="https://github.com/steampunc/site/blob/master/schrodinger/interactiveQM.js"> You can see the code, written in Javascript (which is definitely not the ideal language for this kind of stuff), at this link. </a>
+				<p> Some takeaways and things I've learned from this project: </p>
+				<ul>
+					<li>I was always kind of confused about how Schrodinger's equation could be a wave equation when it looked a lot more like a diffusion equation, but fiddling around with the numerical derivatives here made me realize how important it is that the wavefunction is complex, and the crucial difference made by the factor of i in front of the time dependent derivative. Even when there's no real component of the wavefunction, there's still a complex component, and I forgot that. </li>
+					<li>Numerical derivatives are NOISY, and second derivatives even more so. This is true especially at boundaries where you need to figure out how to extrapolate the slope of the function into the border. Since I'm representing the wavefunction as an array of complex numbers, I had to find some ways to try and make this better. The wavefunction needed to be re-normalized every iteration of the loop because otherwise over extended iterations it would blow up, which wouldn't happen normally, and there is this accordionning of the derivative which I tried to average out by using a seven-point stencil. This didn't seem to help, and I think this is where my problem is. Below is the second-order seven-point stencil.</li>
+					$$\frac{\partial^{(2)}f}{\partial x^{(2)}}\approx\frac{-1f(x-2h)+16f(x-1h)-30f(x+0h)+16f(x+1h)-1f(x+2h)}{12h^{2}}$$
+					<li>Runge-Kutta methods can be super complicated and computationally intensive, but I don't think the problem was in the numerical time integration. I tried several different methods, starting with the basic Euler method, then moving to <a href="https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods">Runge-Kutta 4</a>, then finally back to a simpler method (<a href="https://en.wikipedia.org/wiki/Heun%27s_method">Heun's method</a>) with an adaptive step size which compared the error between a Heun integration and an Eulerian one. I'm proud of this part of the code, because the adaptive step size stuff is very cool and I initially thought that that was where all my problems lied. Sadly, I think I was mistaken. </li>
+				</ul>
+
+			<p> This project definitely took me longer than I was anticipating spending (I've been working on it on and off for probably four days now), and so even though I'm not totally satisfied with the result, I thought I'd still put it out there. Thanks for an awesome semester, Prof. Charman! </p>
+
+			</div>
+		</div>
 		<script src="interactiveQM.js"></script>
 	</body>
 </html>
