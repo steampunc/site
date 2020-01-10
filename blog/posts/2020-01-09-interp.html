@@ -1,0 +1,72 @@
+---
+title: "Least Squares Toybox"
+date: 2020-01-09
+excerpt: "A little silly toy that I've been meaning to make for a little while."
+---
+<script src="https://code.jquery.com/jquery-1.12.4.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.5/math.min.js"> </script>
+<p> I finally had time to sit down for an evening and write this little toy up, which has been on my todo list of silly stuff for a while. I was curious to look at the behavior of the least squares regression on some random data and have the opportunity to fiddle around with the points manually. 
+</p>
+
+<p>
+The equation of the line is more or less only helpful in showing the magnitudes of the various components of the polynomial because there's no real defined scale for point placement. All I defined was (0, 0) as being in the bottom left.
+</p>
+<table style="width:100%">
+	<tr>
+		<td>
+<canvas oncontextmenu="return false;" id="display" width="700" height="400" style="border:1px black solid; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;"> </canvas>
+		</td>
+		<td>
+			<table id="innerTable" style="width:100%;">
+				<tr>
+					<td>
+					Maximum Degree of Approximating Polynomial
+					<input type="number" id="degrees" min="0">
+					</td>
+				</tr>
+				<tr>
+					<td>
+					<button id="1random">Add Random Point</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					<button id="10random">Add 10 Random Points</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					<button id="linear">Linear</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					<button id="gaussian">Gaussian</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					<button id="clear">Clear Points</button>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<p>Left click on the canvas to place points or drag them around, and right click to remove them. You can also adjust the degree of the fitting polynomial and generate some various plots of points by clicking the buttons to the side.
+</p>
+
+<p>As I'm playing around with it, I'm finding it kinda interesting how it approximates a gaussian pretty well when you increase the degree of the polynomial. I guess it makes total sense - we're kind of just approximating the points with a taylor series. The only difference from what we might have seen before is that it's just a discrete set of points, rather than a continuous function like you do analytically. I also found it weird that it seemed to diverge when I increased the polynomial degree beyond a small but reasonable number, but I'm not really sure what's going on there - I think it must be some sort of numerical error(?). I'll take a look at this when I have time.</p>
+<p>Regardless, have fun playing around with it! As always, the code is on github, but it's not terribly neat or well written. As I've been discovering, math in js leaves a lot to be desired.</p>
+<style>
+#innerTable td {
+	padding-top:10px;
+	font-size:1.2em;
+}
+
+button {
+	width:100%;
+}
+
+</style>
+<script src="../attachments/interp.js"> </script>
