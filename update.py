@@ -61,7 +61,12 @@ with open("./blog/index.html", "r") as blog_page:
             content = blog_post.read()
             if (content[0] == "-"):
                 (title, date, summary) = GetInfo(content)
-                html_post = ToHTML(content)
+                html_post = ""
+                if (filename[-5:] == ".html"):
+                    split_file = content.split("\n")
+                    html_post = "\n".join(split_file[5:]).encode("utf-8").strip()
+                else:
+                    html_post = ToHTML(content)
                 post_url = "posts/" + filename.split(".")[0] + ".html"
                 post_format(".post_title").text(title)
                 post_format(".post_title").attr("href", post_url)
