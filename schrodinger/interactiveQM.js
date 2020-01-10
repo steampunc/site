@@ -414,7 +414,7 @@ for (var i = 0; i < density + 1; i++) {
 }
 
 var wfs = [['Centered "Gaussian"', gaussianCentered], ['Offset "Gaussian"', gaussianOff], ["Ground Frequency", sine], ["Second Frequency", fullsine]]
-var currWf = 2;
+var currWf = 3;
 
 var lines = new Line(canvas.width, canvas.height);
 var wavefunction = new Wavefunction(wfs[currWf][1]);
