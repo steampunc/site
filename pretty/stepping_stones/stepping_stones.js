@@ -17,7 +17,6 @@ function getdirection() {
 		direction[1] = randint(-1, 1)
 	}
 	return direction
-
 }
 
 $(document).ready(function() {
@@ -60,7 +59,5 @@ $(document).ready(function() {
 			}
 	}
 	}, 0);
-
-
 });
 
