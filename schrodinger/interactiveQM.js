@@ -14,6 +14,22 @@ var EXP = 2.71828;
 var density = canvas.width / 50;
 var stretch = canvas.width / density;
 
+function getCanvCoord(e) {
+    var x;
+    var y;
+    if (e.pageX || e.pageY) { 
+	x = e.pageX;
+	y = e.pageY;
+    }
+    else { 
+	x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+	y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+    } 
+    x -= offsetX;
+    y -= offsetY;
+    return [x, y];
+}
+
 function sorter(p1, p2) {
     return p1.x - p2.x;
 }
@@ -372,30 +388,32 @@ class Wavefunction {
 }
 
 function handleMouseDown(e){
-    canMouseX=parseInt(e.clientX-offsetX);
-    canMouseY=parseInt(e.clientY-offsetY);
-    px = canMouseX;
-    py = canMouseY;
+	coords = getCanvCoord(e)
+    canMouseX=coords[0]
+    canMouseY=coords[1]
     dragging = true;
     rightClick = e.which == 3;
-    lines.doClick(canMouseX, canMouseY, rightClick);
+    lines.doClick(coords[0], coords[1], rightClick);
 }
 
 function handleMouseUp(e){
-    canMouseX=parseInt(e.clientX-offsetX);
-    canMouseY=parseInt(e.clientY-offsetY);
+	coords = getCanvCoord(e)
+    canMouseX=coords[0]
+    canMouseY=coords[1]
     dragging = false;
 }
 
 function handleMouseOut(e){
-    canMouseX=parseInt(e.clientX-offsetX);
-    canMouseY=parseInt(e.clientY-offsetY);
+	coords = getCanvCoord(e)
+    canMouseX=coords[0]
+    canMouseY=coords[1]
     dragging = false;
 }
 
 function handleMouseMove(e){
-    canMouseX=parseInt(e.clientX-offsetX);
-    canMouseY=parseInt(e.clientY-offsetY);
+	coords = getCanvCoord(e)
+    canMouseX=coords[0]
+    canMouseY=coords[1]
     if (dragging) {
 	lines.doDrag(canMouseX, canMouseY, rightClick);
     }
