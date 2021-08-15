@@ -8,7 +8,7 @@ Standing there, I stared at the room that would be my entire world for the next 
 
 ---
 ### Setup
-Since around February, I've been collaborating with my friend Lucas to figure out how we could do some sort of isolation experience. We talked to both of our parents and initially planned to both do it in a guest room with connected bathroom at his house. Sadly, and perhaps understandably, I wasn't able to do it at Lucas's house, so I ended up doing it in my parents' master bathroom.
+Since around February, I've been collaborating with my friend Willow to figure out how we could do some sort of isolation experience. We talked to both of our parents and initially planned to both do it in a guest room with connected bathroom at his house. Sadly, and perhaps understandably, I wasn't able to do it at Willow's house, so I ended up doing it in my parents' master bathroom.
 
 I should have taken pictures of it once it was set up, but I forgot to, so this map of the bathroom should at least get you an idea of the space.
 

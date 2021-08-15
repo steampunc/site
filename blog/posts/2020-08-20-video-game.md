@@ -1,6 +1,6 @@
 ---
 title: "A Game Jam Retrospective: Grook"
-date: 2020-01-09
+date: 2020-08-20
 excerpt: "Looking back on things I could have done differently"
 ---
 
