@@ -32,14 +32,16 @@ function drawCursor(x, y) {
 }
 
 class Path {
-    constructor(x, y, persist) {
+    constructor(x, y) {
     	this.start = [x, y];
-	this.persist = persist;
 	this.points = [this.start];
     }
 
     add(x, y) {
     	this.points.push([x, y]);	
+	if (this.points.length > 700) {
+	    this.points.shift();
+	}
     }
 
     draw() {
@@ -54,19 +56,43 @@ class Path {
 
 }
 
+$(document).on('input', '.slider', function() {
+    var id = $(this).attr("id"); 
+    mags[id] = $(this).val();
+    var passedMags = [...mags]
+    circle = new Circler(canvas.width / 2, canvas.height / 2, passedMags.shift(), 0.1, 1, passedMags);
+});
+
+$("#num-sliders").on("input", function () {
+    mags = []
+    var num_circles = $("#num-sliders").val()
+    $("#num-indicator").text(num_circles);
+    $("#sliderholder").empty();   
+    for (var i = 1; i <= num_circles; i++) {
+	$("#sliderholder").append("<tr><td>Magnitude of F" + i + ': <input type="range" class="slider" id="' + i + '" min="-100" max="100"></td></tr>');
+	mags.push(30);
+    }
+    circle = new Circler(canvas.width / 2, canvas.height / 2, mags.shift(), 0.1, 1, mags);
+});
+
+
+
 class Circler {
-    constructor(x, y, radius, ang_vel, n) {
+    constructor(x, y, radius, ang_vel, n, mags) {
 	this.x = x;
 	this.y = y;
-	this.r = radius;
-	this.w = ang_vel;
+	this.r = mags.shift();
+	this.w = ang_vel * n;
 	this.theta = 0;
-	console.log(radius)
+	if (this.r <= 0) {
+	    this.r = Math.abs(this.r);
+	    this.theta = Math.PI;
+	}
 
-	if (n > 0 && radius > 30) {
-	    this.child = new Circler(x + this.r * Math.cos(this.theta), y + this.r * Math.sin(this.theta), radius / 2, ang_vel * 2, n - 1);
+	if (mags.length > 0) {
+	    this.child = new Circler(x + this.r * Math.cos(this.theta), y + this.r * Math.sin(this.theta), radius / 2, ang_vel, n + 1, mags);
 	} else {
-	    this.path = new Path(x + this.r * Math.cos(this.theta), y + this.r * Math.sin(this.theta), true);
+	    this.path = new Path(x + this.r * Math.cos(this.theta), y + this.r * Math.sin(this.theta));
 	}
     }
 
@@ -75,11 +101,9 @@ class Circler {
 	this.y = y;
     }
 
-
     process() {
 	ctx.lineWidth = 1;
 	this.theta += this.w * deltaT;
-	console.log(this.theta);
 	ctx.fillStyle = "hsl(" + this.theta / Math.PI * 180 % 360 + ", 100%, 50%)";
 	drawCircle(this.x, this.y, this.r, this.theta);
 	var newPos = [this.x + this.r * Math.cos(this.theta), this.y + this.r * Math.sin(this.theta)];
@@ -93,7 +117,8 @@ class Circler {
     }
 }
 
-var circle = new Circler(canvas.width / 2, canvas.height / 2, 200, 0.1, 10);
+var mags = [200, 100, -50];
+var circle = new Circler(canvas.width / 2, canvas.height / 2, 200, 0.1, 1, mags);
 
 var currRun = setInterval(function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);

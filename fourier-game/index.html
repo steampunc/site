@@ -11,6 +11,7 @@
 		</script>
 		<link rel="stylesheet" href="../style.css">
 		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		<style>
 html, body {
 	width:  100%;
@@ -22,7 +23,23 @@ html, body {
 	<body >
 		<div class="wrapper">
 			<div class="content">
-				<canvas oncontextmenu="return false;" id="display" width="750" height="750" style="border:1px black solid"></canvas>
+			<table style="width:100%">
+				<tr>
+					<td>
+						<canvas oncontextmenu="return false;" id="display" width="750" height="750" style="border:1px black solid"></canvas>
+					</td>
+					<td>
+					Number of Circles
+					<div id="num-indicator">1</div>
+					<input type="range" id="num-sliders" min="1" max="6" value="1">
+					</td>
+
+					<td>
+						<table id="sliderholder" style="width:100%;">
+						</table>
+					</td>
+				</tr>
+			</table>
 			</div>
 		</div>
 		<script src="fourierGame.js"></script>

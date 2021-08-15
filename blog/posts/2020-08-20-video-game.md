@@ -20,5 +20,5 @@ The controls are fairly straightforward: A and D to move, click and hold to send
 
 Below is an embedded version of the game (should work on Chrome and Firefox, maybe not Safari/Edge/Opera/w3m/Links/Brave/whoknowswhat):
 
-<iframe mozallowfullscreen="true" allow="autoplay; fullscreen *;" src="../attachments/grook/grook.html" msallowfullscreen="true" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" id="game_drop" allowtransparency="true" frameborder="0"></iframe>
+<iframe mozallowfullscreen="true" allow="autoplay; fullscreen *;" src="../attachments/grook/grook.html" msallowfullscreen="true" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" id="game_drop" allowtransparency="true" frameborder="0" width="80%"></iframe>
 
