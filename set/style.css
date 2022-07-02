@@ -1,0 +1,87 @@
+
+
+body {
+	font-family: "Balthazar";
+}
+
+.wrapper {
+    margin-top: 50px;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.content {
+	font-size:1.4em;
+	line-height: 1.2em;
+	color: #333333;
+}
+
+.uncolored-link {
+	color: #000000;
+}
+
+#site-title {
+	font-size: 3.5em;
+	line-height: 1.2em;
+	text-decoration: none;
+	color: #000000;
+}
+
+a {
+	text-decoration: none;
+	color: #0000a5;
+}
+
+
+.cardTable {
+	width:80%;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+	padding: 10px;
+}
+
+.center {
+	display:flex;
+	justify-content: center;
+}
+
+.shapeLayout {
+
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around; 
+	align-items: center;
+}
+
+.shape {
+	margin: 0 auto;
+	width: 30%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+svg {
+}
+							
+.card {
+  aspect-ratio: 1.8;
+  border-radius: 20px;
+  background-color: #ffffff;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+  width: 23%;
+  border: 1px solid #000000;
+  box-shadow: 0 5px 8px 0 rgba(0,0,0,0.2),0 3px 10px 0 rgba(0,0,0,0.19) !important;
+}
+
+.inset {
+	border: 3px solid #000000;
+	background-color: #aaffff;
+}
