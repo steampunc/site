@@ -68,12 +68,12 @@
 										<div class="shapeif" v-else-if="card.shape === 'd'">
 											<svg viewBox="-1.2 0 10 16" xmlns="http://www.w3.org/2000/svg">
 												<defs>
-												<pattern id="lines" width="10" height="10">
+												<pattern :id="cardIndex" width="10" height="10">
 												<rect x="0" y="0" width="100" height="100" :fill="card.color"/> 
 												<path transform="matrix(1.118 -1.118 0.559 0.559 0 0)" stroke-width="2.0" stroke="#ffffff" d="m-4 0l2 0m-2 3l10 0m-10 3.25l10 0m-10 3.25l10 0m-10 3.25l10 0m-10 3.25l10 0"/>
 												</pattern>
 												</defs>
-												<rect transform="matrix(.44721 .89443 -.44721 .89443 0 0)" x="4.4372" y="-4.4372" width="8.8744" height="8.8744" v-if="card.fill === 'h'" fill="url(#lines)" stroke-width="0.8" :stroke="card.color" style="paint-order:fill markers stroke"/>
+												<rect transform="matrix(.44721 .89443 -.44721 .89443 0 0)" x="4.4372" y="-4.4372" width="8.8744" height="8.8744" v-if="card.fill === 'h'" :fill="'url(#' + cardIndex + ')'" stroke-width="0.8" :stroke="card.color" style="paint-order:fill markers stroke"/>
 												<rect transform="matrix(.44721 .89443 -.44721 .89443 0 0)" x="4.4372" y="-4.4372" width="8.8744" height="8.8744" v-else-if="card.fill === 'e'" fill="#ffffff" stroke-width="0.8" :stroke="card.color" style="paint-order:fill markers stroke"/>
 												<rect transform="matrix(.44721 .89443 -.44721 .89443 0 0)" x="4.4372" y="-4.4372" width="8.8744" height="8.8744" v-else :fill="card.color" stroke-width="0.8" :stroke="card.color" style="paint-order:fill markers stroke"/>
 											</svg>
